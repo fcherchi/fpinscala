@@ -53,17 +53,64 @@ object PolymorphicFunctions {
   }
 
 
+  // Partial Application (reducing arity / aridad of a function)
+
+  /**
+    * Example of this could be Receiving a product and returning a double
+    * @param fixTerm In the double example this would be 2
+    * @param f In the example the product function
+    * @tparam A
+    * @tparam B
+    * @tparam C
+    * @return
+    */
+  def partial1[A, B, C](fixTerm: A, f: (A, B) => C): B => C = {
+    (b: B) => f(fixTerm, b)
+  }
+
+
+  //Currying
+
+  //from a function that receives 2 args, create a function that receive 1 and return a function that receives the other
+  def curry[A, B, C](f: (A, B) => C) : A => (B => C) = {
+    (a: A) => (b: B) => f(a, b)
+  }
+
+  //reverse
+  def uncurry[A, B, C](f: (A => B => C)) : (A, B) => C = {
+    (a: A, b: B) => f(a)(b)
+  }
+
+
   def main(args: Array[String]): Unit = {
-    val strs = Array("a", "b", "c")
-    logger.debug("Found %d".format(findFirstArr(strs, "b")))
-    logger.debug("Found %d".format(findFirstArr(strs, "x")))
-    logger.debug("Found %d".format(findFirst(strs, "b")))
-    logger.debug("Found %d".format(findFirst(strs, "x")))
+//    val strs = Array("a", "b", "c")
+//    logger.debug("Found %d".format(findFirstArr(strs, "b")))
+//    logger.debug("Found %d".format(findFirstArr(strs, "x")))
+//    logger.debug("Found %d".format(findFirst(strs, "b")))
+//    logger.debug("Found %d".format(findFirst(strs, "x")))
+//
+//    logger.debug("Found %d".format(findFirstComparing(strs, (s: String) => s.equals("b"))))
+//    logger.debug("Found %d".format(findFirstComparing(strs, (s: String) => s.equals("x"))))
+//
+//    logger.debug("Found %d".format(findFirstComparing(Array(1, 2, 4), (i: Int) => i.equals(1))))
 
-    logger.debug("Found %d".format(findFirstComparing(strs, (s: String) => s.equals("b"))))
-    logger.debug("Found %d".format(findFirstComparing(strs, (s: String) => s.equals("x"))))
+    val doble = partial1(2, (a: Int, b: Int) => a * b)
 
-    logger.debug("Found %d".format(findFirstComparing(Array(1, 2, 4), (i: Int) => i.equals(1))))
+    val curr = curry((a: Int, b: Int) => a + b)
+
+    val sixteen = doble(8)
+
+    logger.debug("El doble de %d es: %d".format(8, sixteen))
+
+    //testing curry
+    val five = curr(2)(3)
+    logger.debug("Suma en 2 pasos de %d + %d = %d".format(2, 3, five))
+
+    //testing uncurry
+    val add = uncurry(curr)
+
+    val eight = add(5, 3)
+    logger.debug("Suma en 1 paso con uncurry. %d + %d = %d". format(5, 3, eight))
 
   }
 }
