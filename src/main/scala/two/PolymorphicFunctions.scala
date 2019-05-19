@@ -82,6 +82,12 @@ object PolymorphicFunctions {
   }
 
 
+  //and compose
+
+  def compose[A, B, C](f1: B => C, f2: A => B): A => C = {
+    (a: A) => f1(f2(a))
+  }
+
   def main(args: Array[String]): Unit = {
 //    val strs = Array("a", "b", "c")
 //    logger.debug("Found %d".format(findFirstArr(strs, "b")))
@@ -111,6 +117,11 @@ object PolymorphicFunctions {
 
     val eight = add(5, 3)
     logger.debug("Suma en 1 paso con uncurry. %d + %d = %d". format(5, 3, eight))
+
+    //testing compose
+    val cuadradoYDivide = compose((a: Int) => a / 2, (a: Int) => a * a)
+    val result = cuadradoYDivide(6)
+    logger.debug("(6^2) / 2 = %d".format(result))
 
   }
 }

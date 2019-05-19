@@ -8,11 +8,21 @@ object Exercises {
 
   val logger = LoggerFactory.getLogger(getClass.getName)
 
+  //no tail rec version
   def fibonacci(n: Int):Int = {
     if (n <= 1) n else fibonacci(n - 1) + fibonacci( n - 2)
   }
 
 
+  // this time it is tail rec
+  // At every iteration, we add the two numbers to get the next one.
+  def fib(n: Int): Int = {
+    @tailrec
+    def loop(n: Int, prev: Int, cur: Int): Int =
+      if (n == 0) prev
+      else loop(n - 1, cur, prev + cur)
+    loop(n, 0, 1)
+  }
 
   def isSorted[A](array: Array[A], isSorted: (A, A) => Boolean): Boolean = {
     @tailrec
