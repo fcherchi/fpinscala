@@ -88,11 +88,71 @@ object Lista {
     }
   }
 
+  /**
+    * Stops removing in the first false
+    * @param l
+    * @param f
+    * @tparam A
+    * @return
+    */
+  @tailrec
+  def dropWhile[A](l: Lista[A], f: A => Boolean): Lista[A] =
+    l match {
 
+
+      //Pattern matching accepts guard clauses or extra conditions
+      case NonEmpty(head,tail) if f(head) => dropWhile(tail, f)
+        //fallback
+      case _ => l
+    }
+
+  // this last dropWhile has to be called like this:
+  //  Lista.dropWhile(Lista(1,2,3,4,5,6), (x:Int) => x % 2 == 0)
+
+  //
+  // with this one we dont need the cast because it returns a function that then returns the list
+
+  @tailrec
+  def dropWhileCurried[A](l: Lista[A]) (f: A => Boolean): Lista[A] =
+    l match {
+      case NonEmpty(head,tail) if f(head) => dropWhileCurried(tail)(f)
+      case _ => l
+    }
+
+
+  /**
+    * Non tail rec, not so nice, but an interesting mind game
+    * @param l1
+    * @param l2
+    * @tparam A
+    * @return
+    */
+  def append[A](l1: Lista[A], l2: Lista[A]): Lista[A] = {
+    l1 match {
+      case Nil => l2 //exit condition
+      case NonEmpty(head, tail) => NonEmpty(head, append(tail, l2))
+    }
+  }
+
+  //nasty case, remove last element
+
+  def removeLast[A](l1: Lista[A]): Lista[A] = {
+    l1 match {
+      case Nil => Nil
+      case NonEmpty(_, Nil) => Nil
+      case NonEmpty(head, tail) => {
+
+
+        def loop(l: Lista[A]): Lista[A] = {
+
+        }
+      }
+    }
+  }
 
 
   def main(args: Array[String]): Unit = {
-    val l: Lista[Double] = NonEmpty(2.0, Nil)
+   // val l: Lista[Double] = NonEmpty(2.0, Nil)
 
 
     //pattern matching crazy example
@@ -104,6 +164,8 @@ object Lista {
       case NonEmpty(h, t) => h + Lista.sum(t)
       case _ => 101
     }
+
+    val l = Lista.dropWhileCurried(Lista(1,2,3,4,5,6))(x => x % 2 == 0)
 
    // logger.debug("" + Lista.product(l))
 
