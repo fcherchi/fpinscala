@@ -1,3 +1,5 @@
+import two.PolymorphicFunctions
+
 import scala.annotation.tailrec
 //package three
 
@@ -101,7 +103,7 @@ object Lista {
 
 
       //Pattern matching accepts guard clauses or extra conditions
-      case NonEmpty(head,tail) if f(head) => dropWhile(tail, f)
+      case NonEmpty(head,tail) if !f(head) => dropWhile(tail, f)
         //fallback
       case _ => l
     }
@@ -115,7 +117,7 @@ object Lista {
   @tailrec
   def dropWhileCurried[A](l: Lista[A]) (f: A => Boolean): Lista[A] =
     l match {
-      case NonEmpty(head,tail) if f(head) => dropWhileCurried(tail)(f)
+      case NonEmpty(head,tail) if !f(head) => dropWhileCurried(tail)(f)
       case _ => l
     }
 
@@ -136,19 +138,19 @@ object Lista {
 
   //nasty case, remove last element
 
-  def removeLast[A](l1: Lista[A]): Lista[A] = {
-    l1 match {
-      case Nil => Nil
-      case NonEmpty(_, Nil) => Nil
-      case NonEmpty(head, tail) => {
-
-
-        def loop(l: Lista[A]): Lista[A] = {
-
-        }
-      }
-    }
-  }
+//  def removeLast[A](l1: Lista[A]): Lista[A] = {
+//    l1 match {
+//      case Nil => Nil
+//      case NonEmpty(_, Nil) => Nil
+//      case NonEmpty(head, tail) => {
+//
+//
+//        def loop(l: Lista[A]): Lista[A] = {
+//
+//        }
+//      }
+//    }
+//  }
 
 
   def main(args: Array[String]): Unit = {
@@ -165,7 +167,13 @@ object Lista {
       case _ => 101
     }
 
-    val l = Lista.dropWhileCurried(Lista(1,2,3,4,5,6))(x => x % 2 == 0)
+
+    //val l = Lista.dropWhileCurried(Lista(1,2,3,4,5,6))(x => x % 2 == 0)
+
+   // val dropWhileCurried = PolymorphicFunctions.curry(dropWhile(_: Lista[Int], _: Int => Boolean))
+
+    System.out.println(dropWhile(Lista(1,2,3,4,5,6), (x:Int) => x % 2 == 0))
+    System.out.println(dropWhileCurried(Lista(1,2,3,4,5,6))(x => x % 2 == 0))
 
    // logger.debug("" + Lista.product(l))
 
