@@ -1,4 +1,3 @@
-import two.PolymorphicFunctions
 
 import scala.annotation.tailrec
 //package three
@@ -30,9 +29,9 @@ object Lista {
     }
   }
 
-  def product(ints: Lista[Double]): Double = {
+  def product(nums: Lista[Double]): Double = {
     //pattern matching
-    ints match {
+    nums match {
       case Nil => 1.0
 
       // if head is 0, the result is 0
@@ -42,6 +41,55 @@ object Lista {
       case NonEmpty(head, tail) => head * product(tail)
     }
   }
+
+
+  //Except for the shortcut of 0.0 in product the two methods are quite similar
+  //so we could receive the operation to apply and the value to return in case of nil
+  //In scala it is called foldRight.
+  //The function we receive as second arg for better type inference.
+  //head * foldRight(tail):B == head.*(foldRight(tail)):B == A.*(B):B == f(A, B): B
+  def foldRight[A, B](nums: Lista[A], valueForEmpty: B)(f: (A, B) => B): B = {
+    nums match {
+      case Nil => valueForEmpty
+      case NonEmpty(head, tail) => f(head, foldRight(tail, valueForEmpty)(f))
+    }
+  }
+
+  def sum2(ints: Lista[Int]): Int = foldRight[Int, Int](ints, 0)((x, y) => x + y)
+
+  //the _ * _ notation is the same as (x, y) => x * y but a bit difficult to read
+  def product2(ints: Lista[Int]): Int = foldRight[Int, Int](ints, 1)( _ * _)
+
+  def length[A] (ints: Lista[A]): Int = {
+    var acc = 0
+    foldRight(ints, 0)((_, _) => {
+      acc = acc + 1
+      acc
+    })
+    acc
+  }
+
+
+  def foldLeft[A, B](nums: Lista[A], valueForEmpty: B)(f: (A, B) => B): B = {
+
+    var acc: B = valueForEmpty
+
+    @tailrec
+    def loop[A, B](nums: Lista[A], valueForEmpty: B)(f: (A, B) => B): B = {
+      nums match {
+        case Nil => valueForEmpty
+        case NonEmpty(head, tail) => {
+          acc = f(head, acc)
+          loop(tail, valueForEmpty)(f)
+        }
+      }
+    }
+
+    loop(nums, valueForEmpty)(f)
+    acc
+  }
+
+
 
   //A* means zero or more args of type A (variadic)
   def apply[A](args: A*): Lista[A] = {
@@ -132,7 +180,10 @@ object Lista {
   def append[A](l1: Lista[A], l2: Lista[A]): Lista[A] = {
     l1 match {
       case Nil => l2 //exit condition
-      case NonEmpty(head, tail) => NonEmpty(head, append(tail, l2))
+      case NonEmpty(head, tail) => {
+        val res = append(tail, l2)
+        NonEmpty(head, res)
+      }
     }
   }
 
@@ -172,10 +223,15 @@ object Lista {
 
    // val dropWhileCurried = PolymorphicFunctions.curry(dropWhile(_: Lista[Int], _: Int => Boolean))
 
+    System.out.println(append(Lista(1, 2, 3), Lista(4, 5, 6)))
+
+
     System.out.println(dropWhile(Lista(1,2,3,4,5,6), (x:Int) => x % 2 == 0))
     System.out.println(dropWhileCurried(Lista(1,2,3,4,5,6))(x => x % 2 == 0))
 
-   // logger.debug("" + Lista.product(l))
+    System.out.println("" + Lista.product2(Lista(1, 2, 3)))
+
+    System.out.println("" + Lista.foldLeft[Int, Int](Lista(1, 2, 3), 0)(_ + _))
 
     //logger.debug("" + Lista.product(l))
   }
