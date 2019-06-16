@@ -1,0 +1,7 @@
+package four
+
+object ErrorHandling {
+
+
+
+}
