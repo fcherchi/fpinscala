@@ -75,7 +75,7 @@ object Lista {
     var acc: B = valueForEmpty
 
     @tailrec
-    def loop[A, B](nums: Lista[A], valueForEmpty: B)(f: (A, B) => B): B = {
+    def loop(nums: Lista[A], valueForEmpty: B)(f: (A, B) => B): B = {
       nums match {
         case Nil => valueForEmpty
         case NonEmpty(head, tail) => {
@@ -87,6 +87,7 @@ object Lista {
 
     loop(nums, valueForEmpty)(f)
     acc
+
   }
 
 
